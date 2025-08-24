@@ -24,14 +24,10 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 
 adapters:
-  postgres:
-    database: "pragma"
+  r2dbc:
     host: "localhost"
     port: 5432
+    database: "pragma"
+    schema: "public"
     username: "postgres"
     password: "qwerty"
-    schema: "schema"
-    pool:
-      initial-size: 12
-      max-size: 15
-      max-idle-time: 10

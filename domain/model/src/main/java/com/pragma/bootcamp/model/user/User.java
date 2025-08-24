@@ -7,20 +7,25 @@ import com.pragma.bootcamp.model.user.validation.UserValidation;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
+// @AllArgsConstructor
 @Builder(toBuilder = true)
 public class User {
 
-    private final Long id;
-    private final String name;
-    private final String lastName;
-    private final String document;
-    private final String phone;
-    private final String email;
-    private final String address;
-    private final LocalDate birthDate;
-    private final BigDecimal salary;
+    private Long id;
+    private String name;
+    private String lastName;
+    private String document;
+    private String phone;
+    private String email;
+    private String address;
+    private LocalDate birthDate;
+    private BigDecimal salary;
 
     public User(Long id, String name, String lastName, String document, String phone, String email, String address,
             LocalDate birthDate, BigDecimal salary) {

@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Bootcamp Pragma API")
+                        .title("User Management API")
                         .version("1.0.0")
-                        .description("Documentación de la API del bootcamp de Pragma."));
+                        .description("API para la gestión de usuarios del Bootcamp Pragma."));
     }
 }

@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table("users")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
