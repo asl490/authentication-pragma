@@ -1,0 +1,13 @@
+package com.pragma.bootcamp.r2dbc.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "adapters.postgres")
+public record PostgresqlConnectionProperties(
+                String host,
+                Integer port,
+                String dbname,
+                String schema,
+                String username,
+                String password) {
+}
