@@ -13,6 +13,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCreateDTO {
 
     @NotBlank(message = "El nombre no puede ser nulo o vacío")
@@ -36,17 +38,4 @@ public class UserCreateDTO {
     @Max(value = 15000000, message = "El salario no puede ser mayor a 15,000,000")
     private BigDecimal salary;
 
-    public UserCreateDTO() {
-    }
-
-    public UserCreateDTO(String name, String lastName, String document, String phone, String email, String address, LocalDate birthDate, BigDecimal salary) {
-        this.name = name;
-        this.lastName = lastName;
-        this.document = document;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.birthDate = birthDate;
-        this.salary = salary;
-    }
 }

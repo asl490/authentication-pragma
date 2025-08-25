@@ -20,6 +20,11 @@ management:
     health:
       probes:
         enabled: true
+logging:
+  file:
+    name: logs/backend.log
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 # adapters:
