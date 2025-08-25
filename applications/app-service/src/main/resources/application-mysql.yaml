@@ -1,0 +1,12 @@
+# spring:
+#   r2dbc:
+#     url: r2dbc:mysql://localhost:3306/pragma
+#     username: root
+#     password: 12345678
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 3306
+    database: "pragma"
+    username: "root"
+    password: "12345678"

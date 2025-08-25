@@ -1,0 +1,8 @@
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 5432
+    database: "pragma"
+    schema: "public"
+    username: "postgres"
+    password: "qwerty"
