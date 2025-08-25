@@ -1,5 +1,8 @@
 package com.pragma.bootcamp.usecase.user;
 
+import org.springframework.transaction.reactive.TransactionalOperator;
+
+import com.pragma.bootcamp.model.exception.BusinessException;
 import com.pragma.bootcamp.model.user.User;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
 
@@ -11,6 +14,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase {
 
     private final UserRepository userRepository;
+    private final TransactionalOperator transactionalOperator;
 
     public Flux<User> getAll() {
         return userRepository.getAll();
@@ -25,7 +29,10 @@ public class UserUseCase {
     }
 
     public Mono<User> create(User user) {
-        return userRepository.create(user);
+        return userRepository.findByEmail(user.getEmail())
+                .flatMap(existing -> Mono.<User>error(new BusinessException("Email already exists")))
+                .switchIfEmpty(userRepository.create(user))
+                .transform(transactionalOperator::transactional);
     }
 
     // public Flux<User> findByTitle(String title) {

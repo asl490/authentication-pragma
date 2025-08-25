@@ -22,7 +22,7 @@ public class UserCreateDTO {
 
     @NotBlank(message = "El apellido no puede ser nulo o vacío")
     private String lastName;
-
+    @NotBlank(message = "El documento no puede ser nulo o vacío")
     private String document;
     private String phone;
 

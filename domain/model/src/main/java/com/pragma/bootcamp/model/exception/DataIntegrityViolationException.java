@@ -1,7 +1,7 @@
 package com.pragma.bootcamp.model.exception;
 
-public class BusinessException extends RuntimeException {
-    public BusinessException(String message) {
+public class DataIntegrityViolationException extends RuntimeException {
+    public DataIntegrityViolationException(String message) {
         super(message);
     }
 }

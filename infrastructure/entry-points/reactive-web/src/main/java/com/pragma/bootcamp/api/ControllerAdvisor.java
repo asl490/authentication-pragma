@@ -1,6 +1,8 @@
 package com.pragma.bootcamp.api;
 
 import java.time.LocalDateTime;
+
+import com.pragma.bootcamp.model.exception.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -53,6 +55,19 @@ public class ControllerAdvisor {
                 HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        return new ResponseEntity<>(
+                ErrorResponse.builder()
+                        .httpStatus(HttpStatus.BAD_REQUEST.value())
+                        .code(HttpStatus.BAD_REQUEST.name())
+                        .message("Error de integridad de datos: " + getMessage(ex))
+                        .timestamp(LocalDateTime.now())
+                        .errors(null)
+                        .build(),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(
@@ -77,5 +92,13 @@ public class ControllerAdvisor {
                         .errors(null)
                         .build(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String getMessage(Throwable ex) {
+        Throwable cause = ex;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+        return cause.getMessage();
     }
 }

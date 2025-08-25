@@ -21,6 +21,9 @@ management:
       probes:
         enabled: true
 logging:
+  level:
+    root: INFO
+    com.pragma.bootcamp: TRACE
   file:
     name: logs/backend.log
   pattern:

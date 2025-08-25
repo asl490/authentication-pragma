@@ -14,5 +14,5 @@ public interface UserRepository {
 
     Mono<User> create(User userUser);
 
-    // Flux<User> findByTitle(String title);
+    Mono<User> findByEmail(String email);
 }

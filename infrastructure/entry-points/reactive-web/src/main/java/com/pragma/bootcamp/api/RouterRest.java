@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.pragma.bootcamp.api.dto.ErrorResponse;
 import com.pragma.bootcamp.api.dto.UserCreateDTO;
 import com.pragma.bootcamp.api.dto.UserDTO;
 
@@ -34,7 +35,9 @@ public class RouterRest {
                         @RouterOperation(path = "/api/v1/user", produces = {
                                         MediaType.APPLICATION_JSON_VALUE }, method = RequestMethod.POST, beanClass = Handler.class, beanMethod = "listenSaveUser", operation = @Operation(operationId = "listenSaveUser", summary = "Crear un nuevo usuario", tags = {
                                                         "User Management" }, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserCreateDTO.class))), responses = {
-                                                                        @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+                                                                        @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+                                                                        @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                                                                        @ApiResponse(responseCode = "409", description = "Conflicto. El usuario con el documento o email ya existe.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                                                         })),
                         @RouterOperation(path = "/api/v1/user", produces = {
                                         MediaType.APPLICATION_JSON_VALUE }, method = RequestMethod.PUT, beanClass = Handler.class, beanMethod = "listenUpdateUser", operation = @Operation(operationId = "listenUpdateUser", summary = "Actualizar un usuario existente", tags = {
