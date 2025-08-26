@@ -45,6 +45,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserE
     @Override
     public Mono<User> create(User user) {
         log.trace("Saving new user with email: {}", user.getEmail());
+        log.error("errror: {}", user.getEmail());
         return super.save(user)
                 .doOnSuccess(savedUser -> log.info("Successfully created user with ID: {}", savedUser.getId()))
                 .onErrorMap(DataIntegrityViolationException.class, ex -> {
