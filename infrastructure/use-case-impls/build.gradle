@@ -1,7 +1,0 @@
-dependencies {
-    implementation project(':model')
-    implementation project(':usecase')
-
-    implementation 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-}

@@ -1,11 +1,12 @@
 package com.pragma.bootcamp.config;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UseCasesConfigTest {
 
@@ -31,14 +32,14 @@ public class UseCasesConfigTest {
     static class TestConfig {
 
         @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
+        public UserUseCase UserUseCase() {
+            return new UserUseCase();
         }
     }
 
-    static class MyUseCase {
+    static class UserUseCase {
         public String execute() {
-            return "MyUseCase Test";
+            return "UserUseCase Test";
         }
     }
 }
