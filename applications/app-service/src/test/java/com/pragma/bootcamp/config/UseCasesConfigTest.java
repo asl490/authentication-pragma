@@ -1,12 +1,16 @@
 package com.pragma.bootcamp.config;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import com.pragma.bootcamp.model.gateways.TransactionalGateway;
+import com.pragma.bootcamp.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class UseCasesConfigTest {
 
@@ -30,6 +34,16 @@ public class UseCasesConfigTest {
     @Configuration
     @Import(UseCasesConfig.class)
     static class TestConfig {
+
+        @Bean
+        public UserRepository loanTypeRepository() {
+            return mock(UserRepository.class);
+        }
+
+        @Bean
+        public TransactionalGateway transactionalGateway() {
+            return mock(TransactionalGateway.class);
+        }
 
         @Bean
         public UserUseCase UserUseCase() {

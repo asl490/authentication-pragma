@@ -72,6 +72,15 @@ public class Handler {
                 .then(ServerResponse.noContent().build());
     }
 
+    public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest) {
+        String document = serverRequest.pathVariable("document");
+        return userUseCase.findByDocument(document)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user))
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
     private void validate(UserCreateDTO userDto) {
         Set<ConstraintViolation<UserCreateDTO>> violations = validator.validate(userDto);
         if (!violations.isEmpty()) {

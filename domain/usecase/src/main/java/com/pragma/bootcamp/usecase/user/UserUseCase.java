@@ -33,7 +33,7 @@ public class UserUseCase {
                 .switchIfEmpty(userRepository.create(user)));
     }
 
-    // public Flux<User> findByTitle(String title) {
-    // return userRepository.findByTitle(title);
-    // }
+     public Mono<User> findByDocument(String document) {
+     return userRepository.findByDocument(document);
+     }
 }

@@ -65,4 +65,11 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserE
                 .map(entity -> mapper.map(entity, User.class));
     }
 
+    @Override
+    public Mono<User> findByDocument(String document) {
+        return repository.findByDocument(document)
+                .switchIfEmpty(Mono.empty())
+                .map(entity -> mapper.map(entity, User.class));
+    }
+
 }
