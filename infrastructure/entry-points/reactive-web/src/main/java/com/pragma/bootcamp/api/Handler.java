@@ -1,28 +1,27 @@
 package com.pragma.bootcamp.api;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-
 import com.pragma.bootcamp.api.dto.ErrorResponse;
 import com.pragma.bootcamp.api.dto.UserCreateDTO;
 import com.pragma.bootcamp.api.dto.UserDTO;
 import com.pragma.bootcamp.api.mapper.UserRestMapper;
 import com.pragma.bootcamp.usecase.user.UserUseCase;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -67,7 +66,7 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenDeleteUser(ServerRequest serverRequest) {
-        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+        UUID id = UUID.fromString(serverRequest.pathVariable("id"));
         return userUseCase.delete(id)
                 .then(ServerResponse.noContent().build());
     }
@@ -95,7 +94,7 @@ public class Handler {
 
         log.error("Validation errors: {}", errors);
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .httpStatus(HttpStatus.BAD_REQUEST.value())
+
                 .code(HttpStatus.BAD_REQUEST.name())
                 .message("Validation failed")
                 .timestamp(LocalDateTime.now())

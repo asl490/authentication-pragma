@@ -7,8 +7,10 @@ import com.pragma.bootcamp.r2dbc.entity.UserEntity;
 
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface UserReactiveRepository
-        extends ReactiveCrudRepository<UserEntity, Long>, ReactiveQueryByExampleExecutor<UserEntity> {
+        extends ReactiveCrudRepository<UserEntity, UUID>, ReactiveQueryByExampleExecutor<UserEntity> {
 
     Mono<UserEntity> findByEmail(String email);
     Mono<UserEntity> findByDocument(String document);

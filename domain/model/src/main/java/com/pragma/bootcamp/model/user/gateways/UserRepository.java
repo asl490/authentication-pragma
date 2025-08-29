@@ -5,14 +5,18 @@ import com.pragma.bootcamp.model.user.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface UserRepository {
     Flux<User> getAll();
 
-    Mono<User> update(User userUserUpdate);
+    Mono<User> create(User user);
 
-    Mono<Void> delete(Long idUser);
+    Mono<User> update(User user);
 
-    Mono<User> create(User userUser);
+    Mono<Void> delete(UUID userId);
+
+    Mono<User> findById(UUID userId);
 
     Mono<User> findByEmail(String email);
 

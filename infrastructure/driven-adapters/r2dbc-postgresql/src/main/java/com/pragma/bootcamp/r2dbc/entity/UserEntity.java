@@ -1,16 +1,12 @@
 package com.pragma.bootcamp.r2dbc.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @Table(name = "users")
 @AllArgsConstructor
@@ -21,7 +17,7 @@ import lombok.Setter;
 public class UserEntity {
 
     @Id
-    private Long id;
+    private UUID id;
 
     private String name;
     private String lastName;
