@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 public class User {
 
-    private UUID id;
+    private String id;
     private String name;
     private String lastName;
     private String document;

@@ -39,38 +39,14 @@ public class RouterRest {
                     "User Management"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserDTO.class))), responses = {
                     @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
             })),
-            @RouterOperation(
-                    path = "/api/v1/user/{document}",
-                    produces = {MediaType.APPLICATION_JSON_VALUE},
-                    method = RequestMethod.GET,
-                    beanClass = Handler.class,
-                    beanMethod = "listenFindByDocument",
-                    operation = @Operation(
-                            operationId = "listenFindByDocument",
-                            summary = "Buscar un usuario por documento",
-                            tags = {"User Management"},
-                            parameters = {
-                                    @Parameter(
-                                            name = "document",
-                                            in = ParameterIn.PATH,
-                                            required = true,
-                                            description = "Documento del usuario",
-                                            schema = @Schema(type = "string")
-                                    )
-                            },
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Usuario encontrado",
-                                            content = @Content(schema = @Schema(implementation = UserDTO.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "404",
-                                            description = "Usuario no encontrado"
-                                    )
-                            }
-                    )
-            ),
+            @RouterOperation(path = "/api/v1/user/{document}", produces = {
+                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenFindByDocument", operation = @Operation(operationId = "listenFindByDocument", summary = "Buscar un usuario por documento", tags = {
+                    "User Management"}, parameters = {
+                    @Parameter(name = "document", in = ParameterIn.PATH, required = true, description = "Documento del usuario", schema = @Schema(type = "string"))
+            }, responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            })),
             @RouterOperation(path = "/api/v1/user", produces = {
                     MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenGetAllUsers", operation = @Operation(operationId = "listenGetAllUsers", summary = "Obtener todos los usuarios", tags = {
                     "User Management"}, responses = {

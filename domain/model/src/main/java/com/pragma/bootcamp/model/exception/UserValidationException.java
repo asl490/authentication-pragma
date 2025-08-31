@@ -4,7 +4,28 @@ import com.pragma.bootcamp.model.enums.ErrorCode;
 
 public class UserValidationException extends RuntimeException {
 
+    private final ErrorCode errorCode;
+    private final String resolvedMessage;
+
+    // Constructor original: mantiene compatibilidad
     public UserValidationException(ErrorCode errorCode) {
         super(errorCode.getCode());
+        this.errorCode = errorCode;
+        this.resolvedMessage = null;
+    }
+
+    // Nuevo constructor que recibe mensaje resuelto
+    public UserValidationException(ErrorCode errorCode, String resolvedMessage) {
+        super(resolvedMessage);
+        this.errorCode = errorCode;
+        this.resolvedMessage = resolvedMessage;
+    }
+
+    public String getCode() {
+        return errorCode.getCode();
+    }
+
+    public String getResolvedMessage() {
+        return resolvedMessage != null ? resolvedMessage : errorCode.getCode();
     }
 }

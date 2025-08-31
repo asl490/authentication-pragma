@@ -14,11 +14,9 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 @Slf4j
 @Repository
-public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserEntity, UUID, UserReactiveRepository>
+public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserEntity, String, UserReactiveRepository>
         implements UserRepository {
 
     private final TransactionalGateway transactionalGateway;
@@ -27,6 +25,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserE
                                  ObjectMapper mapper,
                                  TransactionalGateway transactionalGateway) {
         super(repository, mapper, entity -> mapper.map(entity, User.class));
+
         this.transactionalGateway = transactionalGateway;
     }
 
@@ -47,8 +46,7 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserE
                     UserEntity updatedEntity = mapper.map(userToUpdate, UserEntity.class);
                     return transactionalGateway.doInTransaction(
                             repository.save(updatedEntity)
-                                    .doOnSuccess(e -> log.info("Updated user with ID: {}", e.getId()))
-                    );
+                                    .doOnSuccess(e -> log.info("Updated user with ID: {}", e.getId())));
                 })
                 .map(entity -> mapper.map(entity, User.class))
                 .onErrorMap(DataIntegrityViolationException.class, ex -> {
@@ -63,18 +61,21 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserE
 
         return transactionalGateway.doInTransaction(
                 super.save(user)
+//                        .then(repository.findByEmail(user.getEmail()))
+//                        .map(userEntityWithId -> mapper.map(userEntityWithId, User.class))
                         .doOnSuccess(savedUser ->
                                 log.info("Successfully created user with ID: {}", savedUser.getId())
-                        ).onErrorMap(DataIntegrityViolationException.class, ex -> {
+                        )
+                        .onErrorMap(RuntimeException.class, ex -> {
                             log.error("Unexpected DataIntegrityViolationException during create()", ex);
-                            return new DataIntegrityViolationException(ErrorCode.DATA_INTEGRITY_VIOLATION);
+                            return new RuntimeException(ex.getMessage());
                         })
 
         );
     }
 
     @Override
-    public Mono<Void> delete(UUID userId) {
+    public Mono<Void> delete(String userId) {
         return transactionalGateway.doInTransaction(repository.deleteById(userId));
     }
 

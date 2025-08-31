@@ -19,6 +19,7 @@ public class ErrorResponse {
     private String message;
     private LocalDateTime timestamp;
     private List<String> errors;
+    private String path;
 
     public ErrorResponse(String code, String message, LocalDateTime timestamp) {
         this.code = code;

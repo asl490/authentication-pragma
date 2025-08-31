@@ -1,6 +1,7 @@
 package com.pragma.bootcamp.usecase.user;
 
 import com.pragma.bootcamp.model.enums.ErrorCode;
+import com.pragma.bootcamp.model.exception.NotFoundException;
 import com.pragma.bootcamp.model.exception.UserValidationException;
 import com.pragma.bootcamp.model.user.User;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
@@ -8,8 +9,6 @@ import com.pragma.bootcamp.model.user.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public class UserUseCase {
@@ -20,7 +19,7 @@ public class UserUseCase {
         return userRepository.getAll();
     }
 
-    public Mono<User> findById(UUID userId) {
+    public Mono<User> findById(String userId) {
         if (userId == null) {
             return Mono.error(new UserValidationException(ErrorCode.ID_NULL));
         }
@@ -32,7 +31,9 @@ public class UserUseCase {
         if (document == null || document.trim().isEmpty()) {
             return Mono.error(new UserValidationException(ErrorCode.INVALID_DOCUMENT));
         }
-        return userRepository.findByDocument(document);
+        return userRepository.findByDocument(document).switchIfEmpty(
+                Mono.error(new NotFoundException(ErrorCode.USER_NOT_FOUND.toString()))
+        );
     }
 
     public Mono<User> create(User user) {
@@ -41,24 +42,21 @@ public class UserUseCase {
                 .flatMap(this::validateDocumentNotExists)
                 .flatMap(userRepository::create);
     }
+
     public Mono<User> update(User updateUser) {
-        return
-                validateUser(updateUser)
-                        .flatMap(user -> userRepository.findById(user.getId())
-                                .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
-                                .flatMap(existing -> userRepository.update(user))
-                        );
+        return validateUser(updateUser)
+                .flatMap(user -> userRepository.findById(user.getId())
+                        .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
+                        .flatMap(existing -> userRepository.update(user)));
     }
 
-    public Mono<Void> delete(UUID userId) {
+    public Mono<Void> delete(String userId) {
         if (userId == null) {
             return Mono.error(new UserValidationException(ErrorCode.ID_NULL));
         }
-        return
-                userRepository.findById(userId)
-                        .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
-                        .flatMap(user -> userRepository.delete(userId)
-                        );
+        return userRepository.findById(userId)
+                .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
+                .flatMap(user -> userRepository.delete(userId));
     }
 
     private Mono<User> validateUser(User user) {
