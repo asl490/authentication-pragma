@@ -20,7 +20,10 @@ public enum ErrorCode {
     ID_NULL("USR_014"),
     USER_NOT_FOUND("USR_015"),
     DOCUMENT_DUPLICATED("USR_016"),
-    DATA_INTEGRITY_VIOLATION("USR_017");
+    DATA_INTEGRITY_VIOLATION("USR_017"),
+    ROLE_NOT_FOUND("USR_018"),
+    AUTHENTICATION_FAILED("USR_019");
+
 
     private final String code;
 

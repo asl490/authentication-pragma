@@ -1,8 +1,6 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.ErrorResponse;
-import com.pragma.bootcamp.api.dto.UserCreateDTO;
-import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -58,11 +56,19 @@ public class RouterRest {
                     @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "ID del usuario a eliminar")
             }, responses = {
                     @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
+            })),
+            @RouterOperation(path = "/api/v1/auth/login", produces = {
+                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST, beanClass = Handler.class, beanMethod = "listenLogin", operation = @Operation(operationId = "listenLogin", summary = "Autenticar usuario y obtener token", tags = {
+                    "Authentication"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = LoginRequestDTO.class))), responses = {
+                    @ApiResponse(responseCode = "200", description = "Autenticación exitosa, token generado", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Credenciales invalidas", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }))
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/user"), handler::listenSaveUser)
                 .andRoute(PUT("/api/v1/user"), handler::listenUpdateUser)
+                .andRoute(POST("/api/v1/auth/login"), handler::listenLogin)
                 .andRoute(GET("/api/v1/user"), handler::listenGetAllUsers)
                 .andRoute(DELETE("/api/v1/user/{id}"), handler::listenDeleteUser)
                 .andRoute(GET("/api/v1/user/{document}"), handler::listenFindByDocument);

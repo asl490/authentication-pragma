@@ -38,3 +38,15 @@ cors:
 #     schema: "public"
 #     username: "postgres"
 #     password: "qwerty"
+jwt:
+  secret: VGhpcyBpcyBhIHZlcnkgc2VjdXJlIHNlY3JldCBmb3Igand0IHNpZ25pbmcgYW5kIGl0IG11c3QgYmUgbG9uZyBlbm91Z2ggdG8gYmUgc2VjdXJl
+  expiration: 3600
+
+# adapters:
+#   r2dbc:
+#     host: "localhost"
+#     port: 5432
+#     database: "pragma"
+#     schema: "public"
+#     username: "postgres"
+#     password: "qwerty"

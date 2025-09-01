@@ -26,3 +26,5 @@ include ':r2dbc-postgresql'
 project(':r2dbc-postgresql').projectDir = file('./infrastructure/driven-adapters/r2dbc-postgresql')
 include ':use-case-impls'
 project(':use-case-impls').projectDir = file('./infrastructure/use-case-impls')
+include ':security'
+project(':security').projectDir = file('./infrastructure/helpers/security')

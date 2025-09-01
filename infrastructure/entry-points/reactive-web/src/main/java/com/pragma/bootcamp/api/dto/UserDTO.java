@@ -1,10 +1,10 @@
 package com.pragma.bootcamp.api.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -18,5 +18,5 @@ public class UserDTO {
     private String address;
     private LocalDate birthDate;
     private BigDecimal salary;
-
+    private String role;
 }

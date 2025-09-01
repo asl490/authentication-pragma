@@ -4,6 +4,7 @@ import com.pragma.bootcamp.model.enums.ErrorCode;
 import com.pragma.bootcamp.model.exception.NotFoundException;
 import com.pragma.bootcamp.model.exception.UserValidationException;
 import com.pragma.bootcamp.model.user.User;
+import com.pragma.bootcamp.model.user.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
 import com.pragma.bootcamp.model.user.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase {
 
     private final UserRepository userRepository;
+    private final PasswordEncryptionGateway passwordEncryptionGateway;
 
     public Flux<User> getAll() {
         return userRepository.getAll();
@@ -40,6 +42,7 @@ public class UserUseCase {
         return validateUser(user)
                 .flatMap(this::validateEmailNotExists)
                 .flatMap(this::validateDocumentNotExists)
+                .flatMap(this::encodePassword) // <-- PASO NUEVO: Cifrar contraseña
                 .flatMap(userRepository::create);
     }
 
@@ -47,7 +50,8 @@ public class UserUseCase {
         return validateUser(updateUser)
                 .flatMap(user -> userRepository.findById(user.getId())
                         .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
-                        .flatMap(existing -> userRepository.update(user)));
+                        .flatMap(existing -> encodePassword(user)) // <-- PASO NUEVO: Cifrar contraseña
+                        .flatMap(userRepository::update));
     }
 
     public Mono<Void> delete(String userId) {
@@ -57,6 +61,13 @@ public class UserUseCase {
         return userRepository.findById(userId)
                 .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
                 .flatMap(user -> userRepository.delete(userId));
+    }
+
+    private Mono<User> encodePassword(User user) {
+        return Mono.fromCallable(() -> {
+            user.setPassword(passwordEncryptionGateway.encode(user.getPassword()));
+            return user;
+        });
     }
 
     private Mono<User> validateUser(User user) {

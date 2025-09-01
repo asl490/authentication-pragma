@@ -1,8 +1,9 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.UserCreateDTO;
-import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.dto.*;
 import com.pragma.bootcamp.api.mapper.UserRestMapper;
+import com.pragma.bootcamp.model.exception.AuthenticationException;
+import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import com.pragma.bootcamp.usecase.user.UserUseCase;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Slf4j
@@ -24,6 +26,7 @@ import java.util.Set;
 public class Handler {
 
     private final UserUseCase userUseCase;
+    private final LoginUseCase loginUseCase;
     private final UserRestMapper userRestMapper;
     private final Validator validator;
 
@@ -74,4 +77,20 @@ public class Handler {
                         .bodyValue(user));
     }
 
+    public Mono<ServerResponse> listenLogin(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(LoginRequestDTO.class)
+                .doOnNext(dto -> {
+                    Set<ConstraintViolation<LoginRequestDTO>> violations = validator.validate(dto);
+                    if (!violations.isEmpty()) {
+                        throw new ConstraintViolationException(violations);
+                    }
+                })
+                .flatMap(loginRequest -> loginUseCase.login(loginRequest.getEmail(), loginRequest.getPassword()))
+                .flatMap(token -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(new LoginResponseDTO(token)))
+                .onErrorResume(AuthenticationException.class, e -> ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(), e.getErrorCode().name(), LocalDateTime.now())));
+    }
 }

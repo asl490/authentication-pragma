@@ -27,5 +27,7 @@ public class UserEntity {
     private String address;
     private LocalDate birthDate;
     private BigDecimal salary;
+    private String password;
+    private Integer roleId;
 
 }

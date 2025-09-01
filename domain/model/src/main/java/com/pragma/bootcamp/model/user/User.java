@@ -1,5 +1,6 @@
 package com.pragma.bootcamp.model.user;
 
+import com.pragma.bootcamp.model.enums.Role;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,5 +23,7 @@ public class User {
     private String address;
     private LocalDate birthDate;
     private BigDecimal salary;
+    private String password;
+    private Role role;
 
 }
