@@ -3,8 +3,11 @@ package com.pragma.bootcamp.config;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import com.pragma.bootcamp.model.auth.gateways.TokenGateway;
 import com.pragma.bootcamp.model.gateways.TransactionalGateway;
+import com.pragma.bootcamp.model.user.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
+import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +38,14 @@ public class UseCasesConfigTest {
     @Import(UseCasesConfig.class)
     static class TestConfig {
 
+
+
         @Bean
-        public UserRepository loanTypeRepository() {
+        public UserUseCase UserUseCase() {
+            return new UserUseCase();
+        }
+        @Bean
+        public UserRepository userRepository() {
             return mock(UserRepository.class);
         }
 
@@ -46,9 +55,21 @@ public class UseCasesConfigTest {
         }
 
         @Bean
-        public UserUseCase UserUseCase() {
+        public PasswordEncryptionGateway passwordEncryptionGateway() {
+            return mock(PasswordEncryptionGateway.class);
+        }
+
+        @Bean
+        public UserUseCase userUseCase() {
             return new UserUseCase();
         }
+
+        @Bean
+        public TokenGateway tokenGateway() {
+            return mock(TokenGateway.class);
+        }
+
+
     }
 
     static class UserUseCase {

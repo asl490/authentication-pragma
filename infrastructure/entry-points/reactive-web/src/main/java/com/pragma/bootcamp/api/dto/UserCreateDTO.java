@@ -1,16 +1,12 @@
 package com.pragma.bootcamp.api.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -37,5 +33,11 @@ public class UserCreateDTO {
     @Min(value = 0, message = "El salario no puede ser negativo")
     @Max(value = 15000000, message = "El salario no puede ser mayor a 15,000,000")
     private BigDecimal salary;
+
+    @NotBlank(message = "La contraseña no puede ser nula o vacía")
+    private String password;
+
+    @NotBlank(message = "El rol no puede ser nulo o vacío")
+    private String role;
 
 }

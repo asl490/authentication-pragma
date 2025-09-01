@@ -1,9 +1,9 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.ErrorResponse;
-import com.pragma.bootcamp.api.dto.UserCreateDTO;
-import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.dto.*;
 import com.pragma.bootcamp.api.mapper.UserRestMapper;
+import com.pragma.bootcamp.model.exception.AuthenticationException;
+import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import com.pragma.bootcamp.usecase.user.UserUseCase;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -18,10 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,24 +26,25 @@ import java.util.stream.Collectors;
 public class Handler {
 
     private final UserUseCase userUseCase;
+    private final LoginUseCase loginUseCase;
     private final UserRestMapper userRestMapper;
     private final Validator validator;
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
-        log.trace("Received request to save a new user.");
         return serverRequest.bodyToMono(UserCreateDTO.class)
-                .doOnNext(userDto -> log.trace("Request body: {}", userDto))
-                .doOnNext(this::validate) // Validar antes de procesar
+                .doOnNext(dto -> log.trace("Request body: {}", dto))
+                .doOnNext(dto -> {
+                    Set<ConstraintViolation<UserCreateDTO>> violations = validator.validate(dto);
+                    if (!violations.isEmpty()) {
+                        throw new ConstraintViolationException(violations);
+                    }
+                })
                 .map(userRestMapper::toUser)
                 .flatMap(userUseCase::create)
                 .map(userRestMapper::toUserDTO)
-                .flatMap(savedUserDto -> {
-                    log.info("Successfully saved user with ID: {}", savedUserDto.getId());
-                    return ServerResponse.status(HttpStatus.CREATED)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(savedUserDto);
-                })
-                .onErrorResume(ConstraintViolationException.class, this::handleValidationException);
+                .flatMap(savedUserDto -> ServerResponse.status(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(savedUserDto));
     }
 
     public Mono<ServerResponse> listenUpdateUser(ServerRequest serverRequest) {
@@ -66,7 +64,7 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenDeleteUser(ServerRequest serverRequest) {
-        UUID id = UUID.fromString(serverRequest.pathVariable("id"));
+        String id = (serverRequest.pathVariable("id"));
         return userUseCase.delete(id)
                 .then(ServerResponse.noContent().build());
     }
@@ -76,33 +74,23 @@ public class Handler {
         return userUseCase.findByDocument(document)
                 .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(user))
-                .switchIfEmpty(ServerResponse.notFound().build());
+                        .bodyValue(user));
     }
 
-    private void validate(UserCreateDTO userDto) {
-        Set<ConstraintViolation<UserCreateDTO>> violations = validator.validate(userDto);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-    }
-
-    private Mono<ServerResponse> handleValidationException(ConstraintViolationException ex) {
-        List<String> errors = ex.getConstraintViolations().stream()
-                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                .collect(Collectors.toList());
-
-        log.error("Validation errors: {}", errors);
-        ErrorResponse errorResponse = ErrorResponse.builder()
-
-                .code(HttpStatus.BAD_REQUEST.name())
-                .message("Validation failed")
-                .timestamp(LocalDateTime.now())
-                .errors(errors)
-                .build();
-
-        return ServerResponse.status(HttpStatus.BAD_REQUEST)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(errorResponse);
+    public Mono<ServerResponse> listenLogin(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(LoginRequestDTO.class)
+                .doOnNext(dto -> {
+                    Set<ConstraintViolation<LoginRequestDTO>> violations = validator.validate(dto);
+                    if (!violations.isEmpty()) {
+                        throw new ConstraintViolationException(violations);
+                    }
+                })
+                .flatMap(loginRequest -> loginUseCase.login(loginRequest.getEmail(), loginRequest.getPassword()))
+                .flatMap(token -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(new LoginResponseDTO(token)))
+                .onErrorResume(AuthenticationException.class, e -> ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(), e.getErrorCode().name(), LocalDateTime.now())));
     }
 }

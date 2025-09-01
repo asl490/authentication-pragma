@@ -17,7 +17,7 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
-    private UUID id;
+    private String id;
 
     private String name;
     private String lastName;
@@ -27,5 +27,7 @@ public class UserEntity {
     private String address;
     private LocalDate birthDate;
     private BigDecimal salary;
+    private String password;
+    private Integer roleId;
 
 }

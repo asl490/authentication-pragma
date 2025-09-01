@@ -1,8 +1,6 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.ErrorResponse;
-import com.pragma.bootcamp.api.dto.UserCreateDTO;
-import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -39,38 +37,14 @@ public class RouterRest {
                     "User Management"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserDTO.class))), responses = {
                     @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
             })),
-            @RouterOperation(
-                    path = "/api/v1/user/{document}",
-                    produces = {MediaType.APPLICATION_JSON_VALUE},
-                    method = RequestMethod.GET,
-                    beanClass = Handler.class,
-                    beanMethod = "listenFindByDocument",
-                    operation = @Operation(
-                            operationId = "listenFindByDocument",
-                            summary = "Buscar un usuario por documento",
-                            tags = {"User Management"},
-                            parameters = {
-                                    @Parameter(
-                                            name = "document",
-                                            in = ParameterIn.PATH,
-                                            required = true,
-                                            description = "Documento del usuario",
-                                            schema = @Schema(type = "string")
-                                    )
-                            },
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Usuario encontrado",
-                                            content = @Content(schema = @Schema(implementation = UserDTO.class))
-                                    ),
-                                    @ApiResponse(
-                                            responseCode = "404",
-                                            description = "Usuario no encontrado"
-                                    )
-                            }
-                    )
-            ),
+            @RouterOperation(path = "/api/v1/user/{document}", produces = {
+                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenFindByDocument", operation = @Operation(operationId = "listenFindByDocument", summary = "Buscar un usuario por documento", tags = {
+                    "User Management"}, parameters = {
+                    @Parameter(name = "document", in = ParameterIn.PATH, required = true, description = "Documento del usuario", schema = @Schema(type = "string"))
+            }, responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            })),
             @RouterOperation(path = "/api/v1/user", produces = {
                     MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenGetAllUsers", operation = @Operation(operationId = "listenGetAllUsers", summary = "Obtener todos los usuarios", tags = {
                     "User Management"}, responses = {
@@ -82,11 +56,19 @@ public class RouterRest {
                     @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "ID del usuario a eliminar")
             }, responses = {
                     @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
+            })),
+            @RouterOperation(path = "/api/v1/auth/login", produces = {
+                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST, beanClass = Handler.class, beanMethod = "listenLogin", operation = @Operation(operationId = "listenLogin", summary = "Autenticar usuario y obtener token", tags = {
+                    "Authentication"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = LoginRequestDTO.class))), responses = {
+                    @ApiResponse(responseCode = "200", description = "Autenticación exitosa, token generado", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Credenciales invalidas", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }))
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/user"), handler::listenSaveUser)
                 .andRoute(PUT("/api/v1/user"), handler::listenUpdateUser)
+                .andRoute(POST("/api/v1/auth/login"), handler::listenLogin)
                 .andRoute(GET("/api/v1/user"), handler::listenGetAllUsers)
                 .andRoute(DELETE("/api/v1/user/{id}"), handler::listenDeleteUser)
                 .andRoute(GET("/api/v1/user/{document}"), handler::listenFindByDocument);
