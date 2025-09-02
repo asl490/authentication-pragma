@@ -1,6 +1,10 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.*;
+import com.pragma.bootcamp.api.dto.LoginRequestDTO;
+import com.pragma.bootcamp.api.dto.LoginResponseDTO;
+import com.pragma.bootcamp.api.dto.UserCreateDTO;
+import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.exceptions.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

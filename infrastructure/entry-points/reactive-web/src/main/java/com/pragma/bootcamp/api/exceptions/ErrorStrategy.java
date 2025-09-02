@@ -1,7 +1,6 @@
-package com.pragma.bootcamp.api;
+package com.pragma.bootcamp.api.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pragma.bootcamp.api.dto.ErrorResponse;
 import com.pragma.bootcamp.model.exception.DataIntegrityViolationException;
 import com.pragma.bootcamp.model.exception.NotFoundException;
 import com.pragma.bootcamp.model.exception.UserValidationException;

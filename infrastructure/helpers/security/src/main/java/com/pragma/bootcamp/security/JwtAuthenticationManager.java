@@ -1,7 +1,9 @@
 package com.pragma.bootcamp.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
@@ -21,18 +24,23 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         String authToken = authentication.getCredentials().toString();
-
-        return Mono.just(jwtProvider.validateToken(authToken))
-                .filter(isValid -> isValid)
+        return jwtProvider.validateToken(authToken)
+                .filter(valid -> valid)
                 .switchIfEmpty(Mono.error(new BadCredentialsException("Invalid or expired JWT token")))
-                .map(isValid -> {
-                    Claims claims = jwtProvider.getClaimsFromToken(authToken);
-                    String username = claims.getSubject();
-                    String role = claims.get("role", String.class);
-
-                    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-                    return new UsernamePasswordAuthenticationToken(username, null, authorities);
-                });
+                .then(jwtProvider.getClaimsFromToken(authToken))
+                .map(this::buildAuthenticationFromClaims)
+                .onErrorMap(JwtException.class, ex ->
+                        new BadCredentialsException("Invalid JWT token", ex))
+                .onErrorMap(ex ->
+                        new BadCredentialsException("Authentication failed", ex));
     }
+
+    private Authentication buildAuthenticationFromClaims(Claims claims) {
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
+
+        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+    }
+
 }

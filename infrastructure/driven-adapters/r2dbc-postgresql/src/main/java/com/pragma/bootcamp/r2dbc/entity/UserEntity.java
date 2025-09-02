@@ -6,7 +6,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Table(name = "users")
 @AllArgsConstructor
@@ -28,6 +27,6 @@ public class UserEntity {
     private LocalDate birthDate;
     private BigDecimal salary;
     private String password;
-    private Integer roleId;
+    private Long roleId;
 
 }

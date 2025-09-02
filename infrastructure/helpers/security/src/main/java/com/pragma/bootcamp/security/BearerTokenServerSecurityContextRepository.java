@@ -1,5 +1,6 @@
 package com.pragma.bootcamp.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -10,13 +11,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class BearerTokenServerSecurityContextRepository implements ServerSecurityContextRepository {
 
     private final JwtAuthenticationManager authenticationManager;
-
-    public BearerTokenServerSecurityContextRepository(JwtAuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
 
     @Override
     public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {

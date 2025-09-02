@@ -1,4 +1,4 @@
-package com.pragma.bootcamp.api.dto;
+package com.pragma.bootcamp.api.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

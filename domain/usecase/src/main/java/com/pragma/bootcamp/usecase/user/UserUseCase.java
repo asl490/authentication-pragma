@@ -1,10 +1,9 @@
 package com.pragma.bootcamp.usecase.user;
 
 import com.pragma.bootcamp.model.enums.ErrorCode;
-import com.pragma.bootcamp.model.exception.NotFoundException;
 import com.pragma.bootcamp.model.exception.UserValidationException;
+import com.pragma.bootcamp.model.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.user.User;
-import com.pragma.bootcamp.model.user.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
 import com.pragma.bootcamp.model.user.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class UserUseCase {
             return Mono.error(new UserValidationException(ErrorCode.INVALID_DOCUMENT));
         }
         return userRepository.findByDocument(document).switchIfEmpty(
-                Mono.error(new NotFoundException(ErrorCode.USER_NOT_FOUND.toString()))
+                Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND))
         );
     }
 
@@ -42,41 +41,34 @@ public class UserUseCase {
         return validateUser(user)
                 .flatMap(this::validateEmailNotExists)
                 .flatMap(this::validateDocumentNotExists)
-                .flatMap(this::encodePassword) // <-- PASO NUEVO: Cifrar contraseña
+                .flatMap(this::encodePassword)
                 .flatMap(userRepository::create);
     }
 
     public Mono<User> update(User updateUser) {
         return validateUser(updateUser)
-                .flatMap(user -> userRepository.findById(user.getId())
-                        .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
-                        .flatMap(existing -> encodePassword(user)) // <-- PASO NUEVO: Cifrar contraseña
-                        .flatMap(userRepository::update));
+                .flatMap(validatedUser ->
+                                userRepository.findById(validatedUser.getId())
+                                        .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
+//                                .then(encodePassword(validatedUser))
+                                        .flatMap(userRepository::update)
+                );
     }
 
     public Mono<Void> delete(String userId) {
-        if (userId == null) {
-            return Mono.error(new UserValidationException(ErrorCode.ID_NULL));
-        }
         return userRepository.findById(userId)
                 .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.USER_NOT_FOUND)))
                 .flatMap(user -> userRepository.delete(userId));
     }
 
-    private Mono<User> encodePassword(User user) {
-        return Mono.fromCallable(() -> {
-            user.setPassword(passwordEncryptionGateway.encode(user.getPassword()));
-            return user;
-        });
+    private Mono<User> validateUser(User user) {
+        return UserValidation.validate(user);
     }
 
-    private Mono<User> validateUser(User user) {
-        try {
-            UserValidation.validate(user);
-            return Mono.just(user);
-        } catch (UserValidationException e) {
-            return Mono.error(e);
-        }
+    private Mono<User> encodePassword(User user) {
+        return passwordEncryptionGateway.encode(user.getPassword())
+                .map(encoded -> user.toBuilder().password(encoded).build())
+                ;
     }
 
     private Mono<User> validateEmailNotExists(User user) {

@@ -3,6 +3,7 @@ package com.pragma.bootcamp.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -14,6 +15,7 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
     private static final String[] SWAGGER_PATHS = {
@@ -29,7 +31,6 @@ public class SecurityConfig {
                                                          ServerSecurityContextRepository securityContextRepository) {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setSecurityContextRepository(securityContextRepository);
-
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authenticationManager(authenticationManager)
@@ -43,10 +44,6 @@ public class SecurityConfig {
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
-
-    
-
-    
 
     @Bean
     public PasswordEncoder passwordEncoder() {
