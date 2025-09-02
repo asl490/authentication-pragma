@@ -1,24 +1,30 @@
 package com.pragma.bootcamp.api;
 
-import com.pragma.bootcamp.api.dto.*;
-import com.pragma.bootcamp.api.mapper.UserRestMapper;
-import com.pragma.bootcamp.model.exception.AuthenticationException;
-import com.pragma.bootcamp.usecase.auth.LoginUseCase;
-import com.pragma.bootcamp.usecase.user.UserUseCase;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import com.pragma.bootcamp.api.dto.ErrorResponse;
+import com.pragma.bootcamp.api.dto.LoginRequestDTO;
+import com.pragma.bootcamp.api.dto.LoginResponseDTO;
+import com.pragma.bootcamp.api.dto.UserCreateDTO;
+import com.pragma.bootcamp.api.dto.UserDTO;
+import com.pragma.bootcamp.api.mapper.UserRestMapper;
+import com.pragma.bootcamp.model.exception.AuthenticationException;
+import com.pragma.bootcamp.usecase.auth.LoginUseCase;
+import com.pragma.bootcamp.usecase.user.UserUseCase;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -36,7 +42,7 @@ public class Handler {
                 .doOnNext(dto -> {
                     Set<ConstraintViolation<UserCreateDTO>> violations = validator.validate(dto);
                     if (!violations.isEmpty()) {
-                        throw new ConstraintViolationException(violations);
+                        Mono.error(new ConstraintViolationException(violations));
                     }
                 })
                 .map(userRestMapper::toUser)
@@ -82,7 +88,7 @@ public class Handler {
                 .doOnNext(dto -> {
                     Set<ConstraintViolation<LoginRequestDTO>> violations = validator.validate(dto);
                     if (!violations.isEmpty()) {
-                        throw new ConstraintViolationException(violations);
+                        Mono.error(new ConstraintViolationException(violations));
                     }
                 })
                 .flatMap(loginRequest -> loginUseCase.login(loginRequest.getEmail(), loginRequest.getPassword()))
@@ -91,6 +97,7 @@ public class Handler {
                         .bodyValue(new LoginResponseDTO(token)))
                 .onErrorResume(AuthenticationException.class, e -> ServerResponse.status(HttpStatus.UNAUTHORIZED)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(), e.getErrorCode().name(), LocalDateTime.now())));
+                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(), e.getErrorCode().name(),
+                                LocalDateTime.now())));
     }
 }
