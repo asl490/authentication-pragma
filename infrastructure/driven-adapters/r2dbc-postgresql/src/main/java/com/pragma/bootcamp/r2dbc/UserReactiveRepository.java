@@ -8,8 +8,9 @@ import com.pragma.bootcamp.r2dbc.entity.UserEntity;
 import reactor.core.publisher.Mono;
 
 public interface UserReactiveRepository
-        extends ReactiveCrudRepository<UserEntity, Long>, ReactiveQueryByExampleExecutor<UserEntity> {
+        extends ReactiveCrudRepository<UserEntity, String>, ReactiveQueryByExampleExecutor<UserEntity> {
 
     Mono<UserEntity> findByEmail(String email);
 
+    Mono<UserEntity> findByDocument(String document);
 }

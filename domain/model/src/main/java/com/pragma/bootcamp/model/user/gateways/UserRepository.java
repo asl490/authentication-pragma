@@ -8,11 +8,15 @@ import reactor.core.publisher.Mono;
 public interface UserRepository {
     Flux<User> getAll();
 
-    Mono<User> update(User userUserUpdate);
+    Mono<User> create(User user);
 
-    Mono<Void> delete(Long idUser);
+    Mono<User> update(User user);
 
-    Mono<User> create(User userUser);
+    Mono<Void> delete(String userId);
+
+    Mono<User> findById(String userId);
 
     Mono<User> findByEmail(String email);
+
+    Mono<User> findByDocument(String document);
 }
