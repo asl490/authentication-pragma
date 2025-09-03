@@ -1,15 +1,5 @@
 package com.pragma.bootcamp.api;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-
 import com.pragma.bootcamp.api.dto.LoginRequestDTO;
 import com.pragma.bootcamp.api.dto.LoginResponseDTO;
 import com.pragma.bootcamp.api.dto.UserCreateDTO;
@@ -19,13 +9,21 @@ import com.pragma.bootcamp.api.mapper.UserRestMapper;
 import com.pragma.bootcamp.model.exception.AuthenticationException;
 import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import com.pragma.bootcamp.usecase.user.UserUseCase;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -65,7 +63,7 @@ public class Handler {
                         .bodyValue(savedUserDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //    @PreAuthorize("hasRole('ADMIN')")
     public Mono<ServerResponse> listenGetAllUsers(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,6 +79,7 @@ public class Handler {
     public Mono<ServerResponse> listenFindByDocument(ServerRequest serverRequest) {
         String document = serverRequest.pathVariable("document");
         return userUseCase.findByDocument(document)
+                .map(userRestMapper::toUserDTO)
                 .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(user));
