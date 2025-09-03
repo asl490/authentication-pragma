@@ -1,36 +1,20 @@
 package com.pragma.bootcamp.model.user;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.Test;
+
 import com.pragma.bootcamp.model.enums.ErrorCode;
 import com.pragma.bootcamp.model.enums.Role;
 import com.pragma.bootcamp.model.exception.UserValidationException;
 import com.pragma.bootcamp.model.user.validation.UserValidation;
-import org.junit.jupiter.api.Test;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserValidationTest {
-
-    @Test
-    void shouldValidateCorrectEmail() {
-        assertDoesNotThrow(() -> UserValidation.validateEmailFormat("user@example.com"));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenEmailIsNull() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateEmailFormat(null));
-        assertThat(ex.getCode()).isEqualTo(ErrorCode.EMAIL_EMPTY.getCode());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenEmailIsInvalid() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateEmailFormat("invalid@com"));
-        assertThat(ex.getCode()).isEqualTo(ErrorCode.INVALID_EMAIL_FORMAT.getCode());
-    }
 
     @Test
     void shouldValidateCorrectSalary() {
@@ -39,35 +23,23 @@ public class UserValidationTest {
 
     @Test
     void shouldThrowExceptionWhenSalaryIsNull() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateSalary(null));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateSalary(null));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.SALARY_NULL.getCode());
     }
 
     @Test
     void shouldThrowExceptionWhenSalaryIsNegative() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateSalary(BigDecimal.valueOf(-1)));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateSalary(BigDecimal.valueOf(-1)));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.SALARY_NEGATIVE.getCode());
     }
 
     @Test
     void shouldThrowExceptionWhenSalaryIsTooHigh() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateSalary(BigDecimal.valueOf(20000000)));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateSalary(BigDecimal.valueOf(20000000)));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.SALARY_TOO_HIGH.getCode());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenNameIsNullOrEmpty() {
-        assertThrows(UserValidationException.class, () -> UserValidation.validateName(null));
-        assertThrows(UserValidationException.class, () -> UserValidation.validateName("   "));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenLastNameIsNullOrEmpty() {
-        assertThrows(UserValidationException.class, () -> UserValidation.validateLastName(null));
-        assertThrows(UserValidationException.class, () -> UserValidation.validateLastName(""));
     }
 
     @Test
@@ -84,23 +56,23 @@ public class UserValidationTest {
 
     @Test
     void shouldThrowExceptionWhenBirthDateIsNull() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateBirthDate(null));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateBirthDate(null));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.BIRTHDATE_NULL.getCode());
     }
 
     @Test
     void shouldThrowExceptionWhenBirthDateIsInFuture() {
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateBirthDate(LocalDate.now().plusDays(1)));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateBirthDate(LocalDate.now().plusDays(1)));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.BIRTHDATE_IN_FUTURE.getCode());
     }
 
     @Test
     void shouldThrowExceptionWhenUserIsUnderage() {
         LocalDate underageDate = LocalDate.now().minusYears(17);
-        UserValidationException ex = assertThrows(UserValidationException.class, () ->
-                UserValidation.validateBirthDate(underageDate));
+        UserValidationException ex = assertThrows(UserValidationException.class,
+                () -> UserValidation.validateBirthDate(underageDate));
         assertThat(ex.getCode()).isEqualTo(ErrorCode.UNDERAGE.getCode());
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +78,10 @@ public class JwtProvider implements TokenGateway {
             case IllegalArgumentException ignored -> {
                 log.debug("Empty or invalid JWT token");
                 yield "Invalid JWT token";
+            }
+            case SignatureException ignored -> {
+                log.debug("JWT signature does not match locally computed signature {}", ex.getMessage());
+                yield "JWT signature does not match locally computed signature";
             }
             default -> {
                 log.warn("Unexpected JWT parsing error {}", ex.getMessage());

@@ -1,5 +1,9 @@
 package com.pragma.bootcamp.security;
 
+import com.pragma.bootcamp.security.exception.CustomAccessDeniedHandler;
+import com.pragma.bootcamp.security.exception.CustomAuthenticationEntryPoint;
+import com.pragma.bootcamp.security.exception.CustomAuthenticationFailureHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -16,6 +20,7 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private static final String[] SWAGGER_PATHS = {
@@ -25,13 +30,23 @@ public class SecurityConfig {
             "/webjars/**"
     };
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
                                                          ReactiveAuthenticationManager authenticationManager,
                                                          ServerSecurityContextRepository securityContextRepository) {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setSecurityContextRepository(securityContextRepository);
+        authenticationWebFilter.setAuthenticationFailureHandler(customAuthenticationFailureHandler);
+
         return http
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)

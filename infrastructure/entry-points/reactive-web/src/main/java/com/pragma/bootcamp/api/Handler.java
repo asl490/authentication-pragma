@@ -1,5 +1,15 @@
 package com.pragma.bootcamp.api;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+
 import com.pragma.bootcamp.api.dto.LoginRequestDTO;
 import com.pragma.bootcamp.api.dto.LoginResponseDTO;
 import com.pragma.bootcamp.api.dto.UserCreateDTO;
@@ -9,21 +19,13 @@ import com.pragma.bootcamp.api.mapper.UserRestMapper;
 import com.pragma.bootcamp.model.exception.AuthenticationException;
 import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import com.pragma.bootcamp.usecase.user.UserUseCase;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.Set;
 
 @Slf4j
 @Component
@@ -92,13 +94,15 @@ public class Handler {
                         Mono.error(new ConstraintViolationException(violations));
                     }
                 })
-                .flatMap(loginRequest -> loginUseCase.login(loginRequest.getEmail(), loginRequest.getPassword()))
+                .flatMap(loginRequest -> loginUseCase.login(loginRequest.getEmail(),
+                        loginRequest.getPassword()))
                 .flatMap(token -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(new LoginResponseDTO(token)))
                 .onErrorResume(AuthenticationException.class, e -> ServerResponse.status(HttpStatus.UNAUTHORIZED)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(), e.getErrorCode().name(),
+                        .bodyValue(new ErrorResponse(e.getErrorCode().getCode(),
+                                e.getErrorCode().name(),
                                 LocalDateTime.now())));
     }
 }
