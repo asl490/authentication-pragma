@@ -63,7 +63,7 @@ public class Handler {
                         .bodyValue(savedUserDto));
     }
 
-    //    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Mono<ServerResponse> listenGetAllUsers(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)

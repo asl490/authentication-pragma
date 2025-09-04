@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/api/v1/auth/login").permitAll()
                         .pathMatchers(SWAGGER_PATHS).permitAll()
-                        .pathMatchers("/api/v1/**").permitAll()
+                        .pathMatchers("/api/v1/**").authenticated()
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
