@@ -28,7 +28,7 @@ public class CustomAccessDeniedHandler implements ServerAccessDeniedHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.FORBIDDEN),
-                "Access Denied",
+                "The user does not have the necessary permissions to access this resource.",
                 LocalDateTime.now()
         );
 

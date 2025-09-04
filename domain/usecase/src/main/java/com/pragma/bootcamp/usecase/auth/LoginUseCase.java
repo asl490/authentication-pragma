@@ -17,25 +17,22 @@ public class LoginUseCase {
     private final TokenGateway tokenGateway;
     private final LoginAttemptGateway loginAttemptGateway;
 
-
-//    public Mono<String> login(String email, String password) {
-//        return userRepository.findByEmail(email)
-//                .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.AUTHENTICATION_FAILED)))
-//                .flatMap(user ->
-//                        passwordGateway.matches(password, user.getPassword())
-//                                .flatMap(matches -> {
-//                                    if (Boolean.TRUE.equals(matches)) {
-//                                        String token = String.valueOf(tokenGateway.generateToken(user));
-//                                        return Mono.just(token);
-//                                    } else {
-//                                        return Mono.error(new UserValidationException(ErrorCode.AUTHENTICATION_FAILED));
-//                                    }
-//                                })
-//                );
-//    }
-
-
     public Mono<String> login(String email, String password) {
+        return userRepository.findByEmail(email)
+                .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.AUTHENTICATION_FAILED)))
+                .flatMap(user ->
+                        passwordGateway.matches(password, user.getPassword())
+                                .flatMap(matches -> {
+                                    if (Boolean.TRUE.equals(matches)) {
+                                        return tokenGateway.generateToken(user);
+                                    } else {
+                                        return Mono.error(new UserValidationException(ErrorCode.AUTHENTICATION_FAILED));
+                                    }
+                                })
+                );
+    }
+
+    public Mono<String> loginWithBlock(String email, String password) {
         return userRepository.findByEmail(email)
                 .switchIfEmpty(Mono.error(new UserValidationException(ErrorCode.AUTHENTICATION_FAILED)))
                 .flatMap(user ->
@@ -61,6 +58,5 @@ public class LoginUseCase {
                                             });
                                 }));
     }
-
 
 }
