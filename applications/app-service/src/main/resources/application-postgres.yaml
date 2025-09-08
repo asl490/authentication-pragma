@@ -5,5 +5,5 @@ adapters:
     database: "pragma"
     schema: "public"
     username: "postgres"
-    password: "qwerty" # for local dev
-    # password: "store" # for docker
+    #    password: "qwerty" # for local dev
+    password: "store" # for docker

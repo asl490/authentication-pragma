@@ -1,7 +1,10 @@
 package com.pragma.bootcamp.model.enums;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public enum Role {
     ADMIN(1L),
     ASESOR(2L),
@@ -11,10 +14,6 @@ public enum Role {
 
     Role(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public static Role fromId(Long id) {
