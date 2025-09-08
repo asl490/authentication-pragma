@@ -35,7 +35,7 @@ public class Handler {
     private final UserRestMapper userRestMapper;
     private final Validator validator;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASESOR')")
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserCreateDTO.class)
                 .doOnNext(dto -> log.trace("Request body: {}", dto))
@@ -63,7 +63,7 @@ public class Handler {
                         .bodyValue(savedUserDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASESOR')")
     public Mono<ServerResponse> listenGetAllUsers(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)

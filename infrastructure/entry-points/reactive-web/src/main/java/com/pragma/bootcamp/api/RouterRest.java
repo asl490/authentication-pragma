@@ -41,7 +41,7 @@ public class RouterRest {
                     "User Management"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserDTO.class))), responses = {
                     @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
             })),
-            @RouterOperation(path = "/api/v1/user/{document}", produces = {
+            @RouterOperation(path = "/api/v1/user/find-document/{document}", produces = {
                     MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenFindByDocument", operation = @Operation(operationId = "listenFindByDocument", summary = "Buscar un usuario por documento", tags = {
                     "User Management"}, parameters = {
                     @Parameter(name = "document", in = ParameterIn.PATH, required = true, description = "Documento del usuario", schema = @Schema(type = "string"))
@@ -75,6 +75,6 @@ public class RouterRest {
                 .andRoute(POST("/api/v1/auth/login"), handler::listenLogin)
                 .andRoute(GET("/api/v1/user"), handler::listenGetAllUsers)
                 .andRoute(DELETE("/api/v1/user/{id}"), handler::listenDeleteUser)
-                .andRoute(GET("/api/v1/user/{document}"), handler::listenFindByDocument);
+                .andRoute(GET("/api/v1/user/find-document/{document}"), handler::listenFindByDocument);
     }
 }
