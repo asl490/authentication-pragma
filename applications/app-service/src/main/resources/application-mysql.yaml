@@ -9,5 +9,5 @@ adapters:
     port: 3306
     database: "pragma-auth"
     username: "root"
-#    password: "12345678" # for local dev
-    password: "xyz" # for docker
+    password: "12345678" # for local dev
+#    password: "xyz" # for docker

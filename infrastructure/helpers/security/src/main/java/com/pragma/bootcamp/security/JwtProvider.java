@@ -31,6 +31,7 @@ public class JwtProvider implements TokenGateway {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole().name());
         claims.put("name", user.getName());
+        claims.put("document", user.getDocument());
 
         String token = Jwts.builder()
                 .claims(claims)

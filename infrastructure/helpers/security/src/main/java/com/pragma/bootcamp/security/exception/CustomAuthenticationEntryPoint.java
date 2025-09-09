@@ -1,6 +1,5 @@
 package com.pragma.bootcamp.security.exception;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ public class CustomAuthenticationEntryPoint implements ServerAuthenticationEntry
 
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.UNAUTHORIZED),
-                "Authentication required",
+                "Username or password incorrect",
                 LocalDateTime.now()
         );
 
