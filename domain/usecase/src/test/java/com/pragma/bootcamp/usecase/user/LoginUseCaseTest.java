@@ -1,4 +1,4 @@
-package com.pragma.bootcamp.usecase.auth;
+package com.pragma.bootcamp.usecase.user;
 
 import com.pragma.bootcamp.model.auth.gateways.TokenGateway;
 import com.pragma.bootcamp.model.exception.UserValidationException;
@@ -6,6 +6,7 @@ import com.pragma.bootcamp.model.gateways.LoginAttemptGateway;
 import com.pragma.bootcamp.model.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.user.User;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
+import com.pragma.bootcamp.usecase.auth.LoginUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
@@ -16,12 +17,6 @@ import static org.mockito.Mockito.when;
 
 class LoginUseCaseTest {
 
-    private UserRepository userRepository;
-    private PasswordEncryptionGateway passwordGateway;
-    private TokenGateway tokenGateway;
-    private LoginAttemptGateway loginAttemptGateway;
-    private LoginUseCase loginUseCase;
-
     private final String email = "test@example.com";
     private final String password = "password";
     private final User user = User.builder()
@@ -29,6 +24,11 @@ class LoginUseCaseTest {
             .password("hashedpassword")
 
             .build();
+    private UserRepository userRepository;
+    private PasswordEncryptionGateway passwordGateway;
+    private TokenGateway tokenGateway;
+    private LoginAttemptGateway loginAttemptGateway;
+    private LoginUseCase loginUseCase;
 
     @BeforeEach
     void setup() {

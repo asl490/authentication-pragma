@@ -189,6 +189,8 @@ class UserUseCaseTest {
     @Test
     void create_InvalidUser_ShouldFailValidation() {
         User user = User.builder().email("invalid-email")
+                .document("")
+                .password("")
                 .birthDate(LocalDate.parse("2000-01-01"))
                 .salary(BigDecimal.valueOf(100000)).build();
 
@@ -205,59 +207,63 @@ class UserUseCaseTest {
 
     @Test
     void create_EmailDuplicated_ShouldThrowError() {
-        User user = User.builder()
-                .email("a@example.com")
-                .document("123")
-                .password("pass")
-                .birthDate(LocalDate.parse("2000-01-01"))
-                .salary(BigDecimal.valueOf(100000))
-                .build();
+        try (MockedStatic<UserValidation> mockedValidation = mockStatic(UserValidation.class)) {
+            User user = User.builder()
+                    .email("a@example.com")
+                    .document("123")
+                    .password("pass")
+                    .birthDate(LocalDate.parse("2000-01-01"))
+                    .salary(BigDecimal.valueOf(100000))
+                    .build();
 
-        User existingUser = User.builder().id("2").email("a@example.com").build();
+            User existingUser = User.builder().id("2").email("a@example.com").build();
 
-        Mockito.when(UserValidation.validate(user))
-                .thenReturn(Mono.just(user));
+            mockedValidation.when(() -> UserValidation.validate(user))
+                    .thenReturn(Mono.just(user));
 
-        Mockito.when(userRepository.findByEmail("a@example.com"))
-                .thenReturn(Mono.just(existingUser));
+            Mockito.when(userRepository.findByEmail("a@example.com"))
+                    .thenReturn(Mono.just(existingUser));
 
-        Mono<User> result = userUseCase.create(user);
+            Mono<User> result = userUseCase.create(user);
 
-        StepVerifier.create(result)
-                .expectErrorSatisfies(throwable -> {
-                    assert throwable instanceof UserValidationException;
-                })
-                .verify();
+            StepVerifier.create(result)
+                    .expectErrorSatisfies(throwable -> {
+                        assert throwable instanceof UserValidationException;
+                    })
+                    .verify();
 
-        Mockito.verify(userRepository, Mockito.never()).findByDocument(Mockito.any());
+            Mockito.verify(userRepository, Mockito.never()).findByDocument(Mockito.any());
+        }
     }
 
     @Test
     void create_DocumentDuplicated_ShouldThrowError() {
-        User user = User.builder()
-                .email("a@example.com")
-                .document("123")
-                .password("pass")
-                .birthDate(LocalDate.parse("2000-01-01"))
-                .salary(BigDecimal.valueOf(100000))
-                .build();
+        try (MockedStatic<UserValidation> mockedValidation = mockStatic(UserValidation.class)) {
+            User user = User.builder()
+                    .email("a@example.com")
+                    .document("123")
+                    .password("pass")
+                    .birthDate(LocalDate.parse("2000-01-01"))
+                    .salary(BigDecimal.valueOf(100000))
+                    .build();
 
-        Mockito.when(UserValidation.validate(user))
-                .thenReturn(Mono.just(user));
+            mockedValidation.when(() -> UserValidation.validate(user))
+                    .thenReturn(Mono.just(user));
 
-        Mockito.when(userRepository.findByEmail("a@example.com"))
-                .thenReturn(Mono.empty());
+            Mockito.when(userRepository.findByEmail("a@example.com"))
+                    .thenReturn(Mono.empty());
 
-        Mockito.when(userRepository.findByDocument("123"))
-                .thenReturn(Mono.just(User.builder().id("2").document("123").build()));
+            Mockito.when(userRepository.findByDocument("123"))
+                    .thenReturn(Mono.just(User.builder().id("2").document("123").build()));
 
-        Mono<User> result = userUseCase.create(user);
+            Mono<User> result = userUseCase.create(user);
 
-        StepVerifier.create(result)
-                .expectErrorSatisfies(throwable -> {
-                    assert throwable instanceof UserValidationException;
-                })
-                .verify();
+            StepVerifier.create(result)
+                    .expectErrorSatisfies(throwable -> {
+                        assert throwable instanceof UserValidationException;
+                    })
+                    .verify();
+        }
     }
 
     @Test

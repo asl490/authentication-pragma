@@ -30,14 +30,14 @@ public final class UserValidation {
     }
 
     public static Mono<Void> validateDocument(String document) {
-        if (!Pattern.matches(DOCUMENT_REGEX, document)) {
+        if (document == null || !Pattern.matches(DOCUMENT_REGEX, document)) {
             return Mono.error(new UserValidationException(ErrorCode.INVALID_DOCUMENT));
         }
         return Mono.empty();
     }
 
     public static Mono<Void> validatePhone(String phone) {
-        if (!Pattern.matches(PHONE_REGEX, phone)) {
+        if (phone == null || !Pattern.matches(PHONE_REGEX, phone)) {
             return Mono.error(new UserValidationException(ErrorCode.INVALID_PHONE));
         }
         return Mono.empty();
