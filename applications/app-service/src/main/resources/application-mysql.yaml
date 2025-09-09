@@ -1,13 +1,7 @@
-# spring:
-#   r2dbc:
-#     url: r2dbc:mysql://localhost:3306/pragma
-#     username: root
-#     password: 12345678
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 3306
-    database: "pragma-auth"
-    username: "root"
-    password: "12345678" # for local dev
-#    password: "xyz" # for docker
+    host: ${ADAPTERS_R2DBC_HOST:localhost}
+    port: ${ADAPTERS_R2DBC_PORT:3306}
+    database: ${ADAPTERS_R2DBC_DATABASE:pragma-auth}
+    username: ${ADAPTERS_R2DBC_USERNAME:root}
+    password: ${ADAPTERS_R2DBC_PASSWORD:12345678}
