@@ -1,7 +1,7 @@
 adapters:
   r2dbc:
-    host: ${ADAPTERS_R2DBC_HOST:localhost}
-    port: ${ADAPTERS_R2DBC_PORT:3306}
-    database: ${ADAPTERS_R2DBC_DATABASE:pragma-auth}
-    username: ${ADAPTERS_R2DBC_USERNAME:root}
-    password: ${ADAPTERS_R2DBC_PASSWORD:12345678}
+    host: ${ADAPTERS_R2DBC_HOST}
+    port: ${ADAPTERS_R2DBC_PORT}
+    database: ${ADAPTERS_R2DBC_DATABASE}
+    username: ${ADAPTERS_R2DBC_USERNAME}
+    password: ${ADAPTERS_R2DBC_PASSWORD}
