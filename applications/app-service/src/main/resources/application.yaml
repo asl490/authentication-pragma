@@ -35,7 +35,7 @@ logging:
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 jwt:
-  secret: "VGhpcyBpcyBhIHZlcnkgc2VjdXJlIHNlY3JldCBmb3Igand0IHNpZ25pbmcgYW5kIGl0IG11c3QgYmUgbG9uZyBlbm91Z2ggdG8gYmUgc2VjdXJl"
+  secret: "${JWT_SECRET}"
   expiration: 3600
 security:
   login:
