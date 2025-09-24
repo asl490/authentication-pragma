@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .pathMatchers("/api/v1/auth/login").permitAll()
                         .pathMatchers(SWAGGER_PATHS).permitAll()
                         .pathMatchers("/api/v1/user/find-document/**").permitAll()

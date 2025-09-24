@@ -1,7 +1,7 @@
 package com.pragma.bootcamp.config;
 
 import com.pragma.bootcamp.model.auth.gateways.TokenGateway;
-import com.pragma.bootcamp.model.gateways.LoginAttemptGateway;
+//import com.pragma.bootcamp.model.gateways.LoginAttemptGateway;
 import com.pragma.bootcamp.model.gateways.PasswordEncryptionGateway;
 import com.pragma.bootcamp.model.gateways.TransactionalGateway;
 import com.pragma.bootcamp.model.user.gateways.UserRepository;
@@ -67,10 +67,10 @@ public class UseCasesConfigTest {
             return mock(TokenGateway.class);
         }
 
-        @Bean
-        public LoginAttemptGateway loginAttemptGateway() {
-            return mock(LoginAttemptGateway.class);
-        }
+//        @Bean
+//        public LoginAttemptGateway loginAttemptGateway() {
+//            return mock(LoginAttemptGateway.class);
+//        }
 
     }
 

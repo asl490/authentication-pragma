@@ -36,11 +36,11 @@ public class RouterRest {
                     @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                     @ApiResponse(responseCode = "409", description = "Conflicto. El usuario con el documento o email ya existe.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })),
-            @RouterOperation(path = "/api/v1/user", produces = {
-                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.PUT, beanClass = Handler.class, beanMethod = "listenUpdateUser", operation = @Operation(operationId = "listenUpdateUser", summary = "Actualizar un usuario existente", tags = {
-                    "User Management"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserDTO.class))), responses = {
-                    @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
-            })),
+//            @RouterOperation(path = "/api/v1/user", produces = {
+//                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.PUT, beanClass = Handler.class, beanMethod = "listenUpdateUser", operation = @Operation(operationId = "listenUpdateUser", summary = "Actualizar un usuario existente", tags = {
+//                    "User Management"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = UserDTO.class))), responses = {
+//                    @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+//            })),
             @RouterOperation(path = "/api/v1/user/find-document/{document}", produces = {
                     MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "listenFindByDocument", operation = @Operation(operationId = "listenFindByDocument", summary = "Buscar un usuario por documento", tags = {
                     "User Management"}, parameters = {
@@ -54,13 +54,13 @@ public class RouterRest {
                     "User Management"}, responses = {
                     @ApiResponse(responseCode = "200", description = "Lista de usuarios", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDTO.class)))
             })),
-            @RouterOperation(path = "/api/v1/user/{id}", produces = {
-                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.DELETE, beanClass = Handler.class, beanMethod = "listenDeleteUser", operation = @Operation(operationId = "listenDeleteUser", summary = "Eliminar un usuario por ID", tags = {
-                    "User Management"}, parameters = {
-                    @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "ID del usuario a eliminar")
-            }, responses = {
-                    @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
-            })),
+//            @RouterOperation(path = "/api/v1/user/{id}", produces = {
+//                    MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.DELETE, beanClass = Handler.class, beanMethod = "listenDeleteUser", operation = @Operation(operationId = "listenDeleteUser", summary = "Eliminar un usuario por ID", tags = {
+//                    "User Management"}, parameters = {
+//                    @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "ID del usuario a eliminar")
+//            }, responses = {
+//                    @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
+//            })),
             @RouterOperation(path = "/api/v1/auth/login", produces = {
                     MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST, beanClass = Handler.class, beanMethod = "listenLogin", operation = @Operation(operationId = "listenLogin", summary = "Autenticar usuario y obtener token", tags = {
                     "Authentication"}, requestBody = @RequestBody(required = true, content = @Content(schema = @Schema(implementation = LoginRequestDTO.class))), responses = {
@@ -71,10 +71,10 @@ public class RouterRest {
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST("/api/v1/user"), handler::listenSaveUser)
-                .andRoute(PUT("/api/v1/user"), handler::listenUpdateUser)
+//                .andRoute(PUT("/api/v1/user"), handler::listenUpdateUser)
                 .andRoute(POST("/api/v1/auth/login"), handler::listenLogin)
                 .andRoute(GET("/api/v1/user"), handler::listenGetAllUsers)
-                .andRoute(DELETE("/api/v1/user/{id}"), handler::listenDeleteUser)
+//                .andRoute(DELETE("/api/v1/user/{id}"), handler::listenDeleteUser)
                 .andRoute(GET("/api/v1/user/find-document/{document}"), handler::listenFindByDocument);
     }
 }
