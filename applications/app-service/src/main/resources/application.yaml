@@ -28,8 +28,8 @@ logging:
   level:
     root: "INFO"
     com.pragma.bootcamp: "TRACE"
-  file:
-    name: "logs/backend.log"
+  #  file:
+  #    name: "logs/backend.log"
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 cors:
